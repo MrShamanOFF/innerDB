@@ -4,7 +4,7 @@ import objectClasses.DepartmentObjectClass
 import objectClasses.UserObjectClass
 import java.util.*
 
-class DbUsers {
+class DbUsers { //todo я так понял это класс управления данными, по факту он одинаковый с департаментами, подучай как можно это обыграть
     private val userList = mutableMapOf<Int, UserObjectClass>()
     private var increment: Int = 0;
 

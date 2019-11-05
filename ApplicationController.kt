@@ -2,13 +2,13 @@ import dataBase.*
 import objectClasses.UserObjectClass
 import java.text.SimpleDateFormat
 import java.util.*
-
+//todo класс перегружен, у него слишком много ответственностей
 class ApplicationController {
     inner class Command{
         var id: String = "EMPTY"
         var sCommand = "EMPTY"
         var sObject = "EMPTY"
-        val commandSelector = arrayOf("SELECT","UPDATE","CREATE","DELETE","HELP","QUIT")
+        val commandSelector = arrayOf("SELECT","UPDATE","CREATE","DELETE","HELP","QUIT") //todo это должен быть enum
         val objectSelector = arrayOf("USER", "DEPARTMENT")
     }
     private var departments = DbDepartments()
@@ -42,7 +42,7 @@ class ApplicationController {
     }
 
     fun run(){
-        while (true){
+        while (true){ //todo вот этот цикл должен быть в main, далее commandControl, а потом уже классы отвечающие за команды
             val cmdCommand = commandControl()
             val commandSelector = cmdCommand.sCommand
             val objectSelector = cmdCommand.sObject
@@ -61,7 +61,7 @@ class ApplicationController {
 
     private fun select(objectClass: String, id: String){
         val result: Any?
-        when (objectClass) {
+        when (objectClass) { //todo сложно можно отказать от вложенности условий в пользу, например, отдельных методов. Допустим метод проверки на звездочку
             "USER" -> {
                 result = when{
                     id == "*"                         -> { users.getAll() }
@@ -82,7 +82,7 @@ class ApplicationController {
     }
 
     private fun update(objectClass: String, id: String){
-        when(objectClass){
+        when(objectClass){ //todo опять перегруженный метод нужно разносить
             "USER" -> {
                 when{
                     id.matches(Regex("\\d+")) -> {
@@ -97,6 +97,7 @@ class ApplicationController {
 
                             print("User Birth Date (formate dd.mm.yyyy): \t")
                             var dateInput = readLine()
+                            //todo это gbpltw. вынеси регулярку в константы как минимум
                             while (!dateInput!!.matches(Regex("^\\s*(3[01]|[12][0-9]|0?[1-9])\\.(1[012]|0?[1-9])\\.((?:19|20)\\d{2})\\s*\$"))){
                                 println("Input error. Value must be check with pattern \"dd.mm.yyyy\". Try again\r\nBirth Date \t")
                                 dateInput = readLine()
@@ -111,7 +112,7 @@ class ApplicationController {
                             }
                             val pay = payInput.toDouble()
 
-                            var departmentInput: String = ""
+                            var departmentInput: String = "" //todo смущает наличие большого количества переменных
                             var department = -1
                             var departmentObj = departments.read(department)
                             while (departmentObj == null){
@@ -153,12 +154,12 @@ class ApplicationController {
                     else -> {println("id must be digit")}
                 }
             }
-            else -> {println(defaultErrorMessage[1])}
+            else -> {println(defaultErrorMessage[1])} //todo  а теперь представь, что у тебя 20 таблиц...
         }
     }
 
     private fun create(objectClass: String){
-        when(objectClass){
+        when(objectClass){ //todo никогда такого не было и вот опять!
             "USER" -> {
                 if(departments.getAll().isEmpty()){
                     println("No Departments in DB. Please create Department at first")
@@ -244,7 +245,7 @@ class ApplicationController {
             }
             "DEPARTMENT" -> {
                 when{
-                    id == "*" -> {
+                    id == "*" -> {//todo странное предпреждение и реализация. Конечно есть вариант каскадного удаления, но скорее это отдельная команда
                         println("Deleting all department will delete all users\r\nAre you sure to continue? yes/no")
                         when(readLine()){
                             "yes" -> {
@@ -288,7 +289,7 @@ class ApplicationController {
         }
     }
 
-    private fun help(){
+    private fun help(){ //todo это тоже метод для конкретного класса. Едиственное в константы все выносить лучше
         println("Supported Commands:")
         println("SELECT: \r\n\t \"select user/department id/*\" - show User/Department with some id (* - select all data)")
         println("UPDATE: \r\n\t \"update user/department id\" - update User/Department with some id")
